@@ -29,7 +29,7 @@ app.on('message', (ctx) =>{
     if(result[0] == undefined){
       con.query("INSERT INTO users (chat_id, status) VALUES ("+chat_id+", 'first')", function (err, result) {
         reply('Ждун, приветствую тебя в нашей таверне! С фотографируй своё лицо, чтобы я мог тебя увидеть.');
-        replyWithPhoto("/img/1.png")
+        replyWithPhoto('https://pp.userapi.com/c834300/v834300379/117bd5/VfleBD_Xqxw.jpg');
         console.log("User recorded to database");
       });
     }else{
@@ -49,7 +49,7 @@ app.on('message', (ctx) =>{
                   .resize()
                   .extra()
                 )
-                replyWithPhoto("/img/2.png")
+                replyWithPhoto('https://sun1-4.userapi.com/c840622/v840622379/76496/UZxU-HkH6nU.jpg');
                 updateStatus('menu', chat_id)
               }
             })
@@ -68,6 +68,7 @@ app.on('message', (ctx) =>{
               break;
             case 'Комната':
               reply('Приветствую в комнате!\n\nТвой ID: '+result[0].chat_id+'\nТвой баланс: '+result[0].coins+' монет\nТвое звание: '+result[0].level+'')
+              replyWithPhoto('https://pp.userapi.com/c831508/v831508379/d538b/VOKWjvO5vZg.jpg')
               break;
             default:
               reply('Ты сейчас находишься в таверне искателей приключений, пока ты наш ждун. Тут ты можешь обучаться прокачивая свое звание, проходить квесты за которые ты будешь получать деньги и Сокровища и в таверне есть комната, в которой ты можешь отдохнуть, подготовиться к следующим походам и посмотреть статус персонажа.', Markup
@@ -86,6 +87,7 @@ app.on('message', (ctx) =>{
                 .resize()
                 .extra()
               )
+              replyWithPhoto('https://pp.userapi.com/c831508/v831508379/d538b/VOKWjvO5vZg.jpg')
               updateStatus('menu', chat_id)
             }else{
               reply('Неверно, попробуй еще раз!')
@@ -102,6 +104,7 @@ app.on('message', (ctx) =>{
                 .resize()
                 .extra()
               )
+              replyWithPhoto('https://pp.userapi.com/c831508/v831508379/d538b/VOKWjvO5vZg.jpg')
               updateStatus('menu', chat_id)
             }else{
               reply('Неверно, попробуй еще раз!')
