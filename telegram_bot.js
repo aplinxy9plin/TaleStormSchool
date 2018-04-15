@@ -25,10 +25,10 @@ app.on('message', (ctx) =>{
   var replyWithPhoto = ctx.replyWithPhoto
   var chat_id = ctx.from.id
   var message = ctx.update.message.text
-  con.query("SELECT status FROM users WHERE chat_id = "+chat_id+"", function (err, result, fields) {
+  con.query("SELECT status, coins, level FROM users WHERE chat_id = "+chat_id+"", function (err, result, fields) {
     if(result[0] == undefined){
       con.query("INSERT INTO users (chat_id, status) VALUES ("+chat_id+", 'first')", function (err, result) {
-        reply('Приветствую тебя в нашей таверне странник!\nСфотографируй своё лицо, чтобы я мог тебя увидеть. + фото в таверне');
+        reply('Ждун, приветствую тебя в нашей таверне! С фотографируй своё лицо, чтобы я мог тебя увидеть.');
         replyWithPhoto("/img/1.png")
         console.log("User recorded to database");
       });
@@ -44,7 +44,7 @@ app.on('message', (ctx) =>{
                 reply('Если твоё лицо похоже на, это-то я сочувствую тебе. – отправь лицо')
                 //replyWithPhoto('1.jpg')
               }else{
-                reply(' В нашем мире все общаются с помощью языка будущего Python. Ты сейчас находишься в таверне искателей приключений, пока ты наш гость. Тут ты можешь обучаться прокачивая свое звание, проходить квесты за которые ты будешь получать деньги и Сокровища и в таверне есть комната, в которой ты можешь отдохнуть, подготовиться к следующим походам и посмотреть статус персонажа.', Markup
+                reply('Ты сейчас находишься в таверне искателей приключений, пока ты наш ждун. Тут ты можешь обучаться прокачивая свое звание, проходить квесты за которые ты будешь получать деньги и Сокровища и в таверне есть комната, в которой ты можешь отдохнуть, подготовиться к следующим походам и посмотреть статус персонажа.', Markup
                   .keyboard(['Квест','Обучение','Комната'])
                   .resize()
                   .extra()
@@ -59,7 +59,7 @@ app.on('message', (ctx) =>{
           switch (message) {
             case 'Квест':
               // создаем переменную
-              reply('qq')
+              //reply('qq')
               replyWithPhoto("https://pythonworld.ru/m/img/python-3.png")
               break;
             case 'Обучение':
@@ -68,10 +68,10 @@ app.on('message', (ctx) =>{
               updateStatus('obu4', chat_id)
               break;
             case 'Комната':
-
+              reply('Приветствую в комнате!\n\nТвой ID: '+result[0].chat_id+'\nТвой баланс: '+result[0].coins+' монет\nТвое звание: '+result[0].level+'')
               break;
             default:
-              reply(' В нашем мире все общаются с помощью языка будущего Python. Ты сейчас находишься в таверне искателей приключений, пока ты наш гость. Тут ты можешь обучаться прокачивая свое звание, проходить квесты за которые ты будешь получать деньги и Сокровища и в таверне есть комната, в которой ты можешь отдохнуть, подготовиться к следующим походам и посмотреть статус персонажа.'
+              reply('Ты сейчас находишься в таверне искателей приключений, пока ты наш ждун. Тут ты можешь обучаться прокачивая свое звание, проходить квесты за которые ты будешь получать деньги и Сокровища и в таверне есть комната, в которой ты можешь отдохнуть, подготовиться к следующим походам и посмотреть статус персонажа.', Markup
                 .keyboard(['Квест','Обучение','Комната'])
                 .resize()
                 .extra()
@@ -79,11 +79,7 @@ app.on('message', (ctx) =>{
           }
           break;
         case 'obu4':
-          if(message == 'array = ["одна нога","вторая нога","левая рука","правая рука","голова"]'){
-
-          }else{
-
-          }
+          // request to python server
           break;
         default:
 
@@ -206,8 +202,6 @@ function getFile(file_id, callback){
         headers: {"Content-Type":"application/json; charset=utf-8"}
     };
     httpOptions.headers['User-Agent'] = 'node ' + process.version;
-
-    // Paw Store Cookies option is not supported
 
     const request = httpTransport.request(httpOptions, (res) => {
         let responseBufs = [];
