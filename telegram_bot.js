@@ -58,9 +58,8 @@ app.on('message', (ctx) =>{
         case 'menu':
           switch (message) {
             case 'Квест':
-              // создаем переменную
-              //reply('qq')
-              replyWithPhoto("https://pythonworld.ru/m/img/python-3.png")
+              reply('Ты встретил крысу! Чтобы победить ее тебе необходимо присвоить переменной c значения сложения переменных a и b.\n\na = 4\nb = 6')
+              updateStatus('quest', chat_id)
               break;
             case 'Обучение':
               reply('Давай сформируем твоё тело создав массив тела заново. У тебя должно быть пять элементов в нем. Заполним его левая ногой, правая ногой, левая рука, правая рука, голова. Чтобы тебе это сделать нужно создать массив body = ["одна нога","вторая нога","левая рука","правая рука","голова"]')
@@ -79,7 +78,35 @@ app.on('message', (ctx) =>{
           }
           break;
         case 'obu4':
+        // request Request
+          send_code(message, function(answer){
+            if(answer == 'good'){
+              reply('Молодец, все верно! Ты получил 30 монет.', Markup
+                .keyboard(['Квест','Обучение','Комната'])
+                .resize()
+                .extra()
+              )
+              updateStatus('menu', chat_id)
+            }else{
+              reply('Неверно, попробуй еще раз!')
+            }
+          })
           // request to python server
+          break;
+        case 'quest':
+          message = "a=4; b=6; " + message
+          send_code(message, function(answer){
+            if(answer == 'good'){
+              reply('Молодец! Ты победил крысу и получил за это 30 монет и уровень любитель', Markup
+                .keyboard(['Квест','Обучение','Комната'])
+                .resize()
+                .extra()
+              )
+              updateStatus('menu', chat_id)
+            }else{
+              reply('Неверно, попробуй еще раз!')
+            }
+          })
           break;
         default:
 
@@ -87,6 +114,52 @@ app.on('message', (ctx) =>{
     }
   })
 })
+
+function send_code(code, callback){
+  (function(callback) {
+      'use strict';
+      const httpTransport = require('http');
+      const responseEncoding = 'utf8';
+      const httpOptions = {
+          hostname: '127.0.0.1',
+          port: '3000',
+          path: '/?code=print(%27hello%27)',
+          method: 'POST',
+          headers: {"Content-Type":"application/json; charset=utf-8"}
+      };
+      httpOptions.headers['User-Agent'] = 'node ' + process.version;
+
+      // Paw Store Cookies option is not supported
+
+      const request = httpTransport.request(httpOptions, (res) => {
+          let responseBufs = [];
+          let responseStr = '';
+
+          res.on('data', (chunk) => {
+              if (Buffer.isBuffer(chunk)) {
+                  responseBufs.push(chunk);
+              }
+              else {
+                  responseStr = responseStr + chunk;
+              }
+          }).on('end', () => {
+              responseStr = responseBufs.length > 0 ?
+                  Buffer.concat(responseBufs).toString(responseEncoding) : responseStr;
+
+              callback(null, res.statusCode, res.headers, responseStr);
+          });
+
+      })
+      .setTimeout(0)
+      .on('error', (error) => {
+          callback(error);
+      });
+      request.write("{\"code\":\""+code+"\"}")
+      request.end();
+  })((error, statusCode, headers, body) => {
+      callback(body)
+  });
+}
 
 function updateStatus(status, chat_id){
   con.query("UPDATE users SET status = '"+status+"' WHERE chat_id = "+chat_id+"")
